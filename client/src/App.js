@@ -25,11 +25,31 @@ const App = (props) => {
       });
   }, []);
 
-  const deleteMovie = (id)=> {
-  }
+  const getMovies = () => {
+    axios.get('http://localhost:5000/api/movies')
+      .then(res => {
+        setMovies(res.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    }
 
-  const addToFavorites = (movie) => {
-    
+    useEffect(()=>{
+      getMovies()
+    }, []);
+
+  const deleteMovie = (id)=> {
+    axios.delete(`http://localhost:5000/api/movies/${id}`)
+    .then(res=>{
+      console.log(res);
+    })
+    .catch(err=>{
+      console.log(err);
+    })
+    .then(()=>{
+      getMovies();
+    });
   }
 
   return (
@@ -45,10 +65,11 @@ const App = (props) => {
         
           <Switch>
             <Route path="/movies/edit/:id">
+            <EditMovieForm getMovies = {getMovies}/>
             </Route>
 
             <Route path="/movies/:id">
-              <Movie/>
+            <Movie deleteMovie={deleteMovie}/>
             </Route>
 
             <Route path="/movies">
